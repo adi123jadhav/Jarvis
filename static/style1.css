@@ -1,0 +1,214 @@
+/* General Futuristic Styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0a0a0a;
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(0, 255, 200, 0.1) 0%, transparent 50%);
+    color: #e0e0e0;
+    font-family: 'Orbitron', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  /* Animated Grid Background */
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(rgba(0, 255, 200, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 200, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 100s linear infinite;
+    z-index: -1;
+  }
+  
+  @keyframes gridScroll {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+  }
+  
+  /* Auth Container */
+  .auth-container {
+    width: 400px;
+    background: rgba(20, 20, 30, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 200, 0.3);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .auth-container::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+      rgba(0, 100, 255, 0.8), 
+      rgba(0, 255, 200, 0.8), 
+      rgba(0, 100, 255, 0.8));
+    z-index: -1;
+    border-radius: 10px;
+    animation: borderGlow 3s linear infinite;
+    background-size: 200% 200%;
+  }
+  
+  @keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Header */
+  .auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .auth-header h1 {
+    color: #00ffcc;
+    font-size: 28px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+  }
+  
+  .auth-header p {
+    color: #aaa;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  /* Form Elements */
+  .auth-form .form-group {
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .auth-form label {
+    display: block;
+    color: #00ffcc;
+    margin-bottom: 8px;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+  
+  .auth-form input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(30, 30, 40, 0.8);
+    border: 1px solid rgba(0, 255, 200, 0.3);
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .auth-form input:focus {
+    outline: none;
+    border-color: #00ffcc;
+    box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+  }
+  
+  /* Submit Button */
+  .auth-form button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(45deg, #0066ff, #00ffcc);
+    border: none;
+    border-radius: 4px;
+    color: #111;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .auth-form button:hover {
+    background: linear-gradient(45deg, #00ffcc, #0066ff);
+    box-shadow: 0 0 15px rgba(0, 255, 200, 0.5);
+    transform: translateY(-2px);
+  }
+  
+  /* Footer Links */
+  .auth-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+  }
+  
+  .auth-footer a {
+    color: #00ffcc;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .auth-footer a:hover {
+    text-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 500px) {
+    .auth-container {
+      width: 90%;
+      padding: 30px 20px;
+    }
+  }
+  
+  /* Input Animation Effects */
+  .auth-form .form-group::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #00ffcc;
+    transition: width 0.3s ease;
+  }
+  
+  .auth-form .form-group:focus-within::after {
+    width: 100%;
+  }
+  
+  /* Status Messages */
+  .status-message {
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .error-message {
+    background: rgba(255, 50, 50, 0.2);
+    border: 1px solid rgba(255, 50, 50, 0.5);
+    color: #ff6666;
+  }
+  
+  .success-message {
+    background: rgba(50, 255, 50, 0.2);
+    border: 1px solid rgba(50, 255, 50, 0.5);
+    color: #66ff66;
+  }
+
+  

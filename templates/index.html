@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JARVIS Chat</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="chat-wrapper">
+    <!-- Header -->
+    <div class="header">
+      Welcome, Commander.
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat">
+      <div class="bot-message message">System online. How may I assist you today?</div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-wrapper">
+      <input type="text" id="userInput" placeholder="Type your command..." />
+      <button type="submit" id="send-btn">Send</button>
+    </div>
+  </div>
+  <button id="logout-btn" class="logout-btn">Logout</button>
+  <!-- Footer -->
+  <div class="footer">
+    © 2025 Stark Industries • AI Assistant Mode
+  </div>
+  <script src="/static/script.js"></script>
+  </body>
+  </html>
