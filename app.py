@@ -7,11 +7,24 @@ from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
+# No imports should be named 'uuid.py' to avoid conflicts
+# Use absolute imports to avoid issues with naming conflicts
 import os
-import uuid
+import redis
+
+from uuid import uuid4  # Import specific function instead of whole module
+from functools import wraps
+from flask import Flask, redirect, render_template, request, session, jsonify
+from flask_session import Session
+from werkzeug.security import check_password_hash, generate_password_hash
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, MessagesState, StateGraph
+from dotenv import load_dotenv
 import psycopg2
 import psycopg2.extras
-from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -21,16 +34,46 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "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"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDpD2Ltm4fQFDrLvf1nAMBazrKoKHGG5qI"
 app = Flask(__name__)
+app.config["SESSION_TYPE"] = "redis"
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_USE_SIGNER"] = True
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
+
+app.config["SESSION_REDIS"] = redis.from_url("redis://default:DgGuIhzlOOl4XMQORQJSAssnURDiD4M7@redis-14137.c44.us-east-1-2.ec2.redns.redis-cloud.com:14137")
 Session(app)
 
 # Neon DB configuration
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://neondb_owner:npg_TSB9rnecdJC1@ep-gentle-block-a47j9qn2-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require")
 
+# Extract endpoint ID from the DATABASE_URL
+def get_endpoint_id():
+    # Parse the endpoint ID from the hostname part of the URL
+    # Example: postgresql://user:pass@ep-cool-name-123456.us-east-2.aws.neon.tech/dbname
+    # Endpoint ID would be: ep-cool-name-123456
+    try:
+        import re
+        match = re.search(r'@([^.]+)', DATABASE_URL)
+        if match:
+            return match.group(1)
+        return None
+    except:
+        return None
+
 # Database connection function
 def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    endpoint_id = get_endpoint_id()
+    
+    # If we can extract an endpoint ID, append it to the connection options
+    if endpoint_id:
+        # Check if there are already parameters in the URL
+        if '?' in DATABASE_URL:
+            connection_string = f"{DATABASE_URL}&options=endpoint%3D{endpoint_id}"
+        else:
+            connection_string = f"{DATABASE_URL}?options=endpoint%3D{endpoint_id}"
+    else:
+        connection_string = DATABASE_URL
+    
+    conn = psycopg2.connect(connection_string, sslmode='require')
     conn.autocommit = True
     return conn
 
@@ -107,36 +150,36 @@ def after_request(response):
 def index():
     return render_template('index.html')
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     session.clear()
-    if request.method == "POST":
-        if not request.form.get("username"):
-            return render_template("error.html", error="Must Provide Username")
-        elif not request.form.get("password"):
-            return render_template("error.html", error="Must Provide Password")
+    if request.method == 'POST':
+        if not request.form.get('username'):
+            return render_template('error.html', error='Must Provide Username')
+        elif not request.form.get('password'):
+            return render_template('error.html', error='Must Provide Password')
         
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         
         cur.execute(
-            "SELECT * FROM users WHERE username = %s", (request.form.get("username"),))
+            'SELECT * FROM users WHERE username = %s', (request.form.get('username'),))
         rows = cur.fetchall()
         
         cur.close()
         conn.close()
         
         if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
+            rows[0]['hash'], request.form.get('password')
         ):
-            return render_template("error.html", error="Invalid Username or password")
+            return render_template('error.html', error='Invalid Username or password')
         
-        session["user_id"] = rows[0]["id"]
-        session["config_id"] = str(uuid.uuid4())
+        session['user_id'] = rows[0]['id']
+        session['config_id'] = str(uuid4())  # Use uuid4() instead of uuid.uuid4()
 
-        return redirect("/")
+        return redirect('/')
     else:
-        return render_template("login.html")
+        return render_template('login.html')
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
